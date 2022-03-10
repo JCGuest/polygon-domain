@@ -1,22 +1,19 @@
 const main = async () => {
     const domainContractFactory = await hre.ethers.getContractFactory('Domains');
     const [owner, randomPerson] = await hre.ethers.getSigners();
-    const domainContract = await domainContractFactory.deploy();
+    const domainContract = await domainContractFactory.deploy("emoji");
     await domainContract.deployed();
     console.log("Contract deployed to:", domainContract.address);
     console.log("Contract deployed by:", owner.address);
   
-    let txn = await domainContract.register("max");
+    let txn = await domainContract.register("mortal",  {value: hre.ethers.utils.parseEther('0.5')});
     await txn.wait();
   
-    const domainAddress = await domainContract.getAddress("max");
-    console.log("Owner of domain max:", domainAddress);
+    const address = await domainContract.getAddress("mortal");
+    console.log("Owner of domain mortal:", address);
   
-    txn = await domainContract.connect(owner).setRecord("max","👋");
-    await txn.wait();
-
-    const domainRecord = await domainContract.getRecord("max");
-    console.log("Record of max:", domainRecord);
+    const balance = await hre.ethers.provider.getBalance(domainContract.address);
+    console.log("Contract balance:", hre.ethers.utils.formatEther(balance));
 
   };
   
